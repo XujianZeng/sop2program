@@ -1,0 +1,2 @@
+# Preserve exact file bytes for CODE_SHA256.json and experiment fingerprints.
+* -text
