@@ -32,7 +32,9 @@ The study examines a limitation of language-model compilation of laboratory prot
 
 In retrospective five-fold evaluation of 276 protocols, 15.5-22.2% of repaired programs accepted by the string verifier fail annotation-derived replay. For the fine-tuned 14B compiler, deterministic repair increases jointly confirmed programs from 97 to 142; a trained cascade reaches 188. A controlled study fixes the architecture, compiled inputs and generation ceilings without fallback: at the eight-sequence ceiling, producer feedback confirms 180 programs (mean 178.3 over three training seeds, with no losses against deterministic repair in any seed), versus 142-149 for four feedback controls. Reimplemented CRITIC- and CLAIRify-style refinement on the same 14B backbone confirms 158 and 160 (Holm-adjusted p=0.0025); driven by a commercial API model, these strategies confirm 186-189, not significantly different from the fitted proposer, at up to 11 times its output tokens. On a second corpus derived from ChEMU and ChEMU-Ref, evaluated with the design frozen, deterministic repair raises confirmations from {X['chemu']['arms_at_cap8']['F_first_pass']['confirmed']} to {X['chemu']['arms_at_cap8']['D_deterministic']['confirmed']}, 28-29% of acceptances fail replay under every repair method, and refinement adds at most eight confirmations because few verifier-detectable errors remain.
 
-The paper connects neuro-symbolic procedural reasoning to the validity of its evaluation oracle and shows that verifier-guided refinement, learned or prompted, is bounded by what the verifier can see. The main article presents the central methods and comparisons; Online Resource 1 retains complete fold-level, seed, external-baseline and statistical tables, resource accounting, automatic diagnostics and saved-output CPU replay. Limitations include retrospective development choices, supplied anchors and inventories, rule-derived ChEMU chains, heuristic entity resolution and projected state semantics. We claim neither physical laboratory execution nor independent human validation. Generative-AI assistance in manuscript preparation is disclosed.
+The paper connects neuro-symbolic procedural reasoning to the validity of its evaluation oracle and shows that verifier-guided refinement, learned or prompted, is bounded by what the verifier can see. The main article presents the central methods and comparisons; Online Resource 1 retains complete fold-level, seed, external-baseline and statistical tables, resource accounting, automatic diagnostics and saved-output CPU replay. Limitations include retrospective development choices, supplied anchors and inventories, rule-derived ChEMU chains, heuristic entity resolution and projected state semantics. We claim neither physical laboratory execution nor independent human validation. The analysis code is provided in Online Resource 1 and at https://github.com/XujianZeng/sop2program.
+
+We confirm that the manuscript is original, has not been published previously, and is not under consideration for publication elsewhere; it will not be submitted to another journal while it is under review with you. All authors have read and approved the submitted version and agree with its submission. The authors declare no competing interests, and the research received no external funding. ChatGPT Codex was used to assist with code generation and manuscript checking; the authors reviewed the results against the code and the saved experimental outputs, and take full responsibility for the content. This use is disclosed in the manuscript.
 
 Thank you for considering this work.
 
@@ -45,7 +47,7 @@ Email: zengxujian5@gmail.com
 ''')
 
 write('author_information.txt',f'''Manuscript: {TITLE}
-Author order and contact information transcribed from the author reference supplied by the requester. Authors must confirm that affiliations, contacts and contributions apply to this study.
+Author order, contacts and ORCID iDs follow the authors' earlier submission record (ESWA-D-26-40712).
 
 1. Xujian Zeng — corresponding author
 Email: zengxujian5@gmail.com
@@ -55,21 +57,26 @@ Full address: Rooms 601-602, Building 1, Phase II, Kaiyang Intelligent Manufactu
 
 2. Xin Lu
 Email: xinlu5417@126.com
+ORCID: 0009-0006-4060-7773
 Affiliation: School of Information Engineering, Guilin Institute of Information Technology.
 Full address: No. 9 Yantu Road, Lingui District, Guilin 541004, Guangxi, China.
 
 3. Shuaikang Wu
 Email: shwaikang@gmail.com
+ORCID: 0009-0001-7803-7714
 Affiliation: Laibin Survey Team, National Bureau of Statistics of China.
 Full address: 16th Floor, Investment and Development Building, No. 44 Renmin Road, Laibin 546100, Guangxi, China.
 
-The manuscript uses concise institutional addresses. These full addresses may be used in the submission system after author verification.
+The manuscript uses concise institutional addresses; the full addresses above can be entered in the submission system.
+
+CRediT authorship contribution statement (as in the manuscript):
+Xujian Zeng: Conceptualization, Methodology, Validation, Formal analysis, Investigation, Visualization, Supervision, Project administration, Writing - review & editing. Xin Lu: Writing - original draft, Writing - review & editing. Shuaikang Wu: Software, Validation, Data curation.
 ''')
 
 write('submission_notes_zh.txt',f'''Applied Intelligence 投稿说明（2026-10-07）
 
 稿件：{TITLE}
-本地投稿稿，尚未向期刊提交，不能保证录用。投稿前须由全体作者确认声明和最终稿。
+本地投稿稿，尚未向期刊提交，不能保证录用。
 
 一、上传文件（见同目录“上传清单.txt”）
 manuscript.pdf：正文PDF，18页（含参考文献），5张表、2幅图；Springer sn-jnl模板，字体、字号、页边距未改。
@@ -91,15 +98,17 @@ cover_letter.txt：英文附信。author_information.txt：作者信息（填系
 X-WLP为MIT许可，原许可证和README随ESM提供。
 ChEMU 2020与ChEMU-Ref受Elsevier有限数据许可约束，仅限研究使用。ESM只包含推导与评测代码、片段ID和汇总结果（results/chemu/summary.json、document_outcomes.csv），不含任何原始或派生的ChEMU文本、标注、程序、规则或含提示词的输出。
 
-四、投稿前必须由作者确认的事项
-1. 利益冲突与CRediT贡献：仍为根据参考PDF暂拟的文字，须作者确认后据实修改。经费已于2026-10-05确认为“无经费”。
-2. 生成式AI声明：现写为“ChatGPT Codex and the Cursor coding agent (Claude models)”用于写作、实验与复核脚本和作图辅助。请按实际使用的工具确认或修改（正文5.5节和声明部分两处）。
-3. 全体作者通读并同意最终稿；在投稿系统中如实确认原创性和未一稿多投。
-4. 作者表示无法开展人工盲审；稿件未声称任何人工评分、专家一致性或物理实验执行。
+四、声明（2026-10-07按作者要求定稿，与ESWA-D-26-40712一致）
+1. 经费：无经费（2026-10-05确认）。
+2. 利益冲突：The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+3. CRediT：Xujian Zeng负责构思、方法、验证、形式分析、调查、可视化、指导、项目管理、审阅与修改；Xin Lu负责初稿撰写、审阅与修改；Shuaikang Wu负责软件、验证、数据整理。英文原文见正文和author_information.txt。
+4. 生成式AI声明：ChatGPT Codex用于辅助代码生成和稿件检查（正文5.5节与声明部分两处）。
+5. 代码：Online Resource 1，以及公开仓库https://github.com/XujianZeng/sop2program。
+6. 投稿系统中如实确认原创性和未一稿多投；稿件未声称任何人工评分、专家一致性或物理实验执行。
 
 五、解释范围
 亮点是验证/修复系统的实体身份敏感性及其评估方法，而不是端到端实验室执行。保留的限制：金标动作锚点和初始库存、模板投影状态、启发式共指解析、ChEMU实体链由规则推导、回顾性折划分与开发集选择、主级联和外部基线只有一次训练。
-补充审计中一项仅在补充数据文件出现的描述性指标（replayed_details.json第5条记录的precondition_exact_chain）随Python字符串哈希顺序变化约0.3–0.5个百分点；该指标未在正文或补充表中报告。复核时设置PYTHONHASHSEED=1可逐字节复现归档值。
+补充审计中一项仅在补充数据文件出现的描述性指标（replayed_details.json第5条记录的precondition_exact_chain）随Python字符串哈希顺序变化约0.3–0.5个百分点；该指标未在正文或补充表中报告。复核入口tools/run_audits.py已固定PYTHONHASHSEED=1，按顺序运行全部CPU复核，可逐字节复现归档值。
 
 六、格式与入口
 摘要210词（要求150–250），6个关键词，含作者声明、数据与代码可得性及补充材料说明。
@@ -177,7 +186,7 @@ for name in ('results/hypothesis_opt/summary.json','results/hypotheses_v4.json',
 for model in ('Qwen3-14B-FP8','Qwen2.5-3B-Instruct'):
     for name in ('config.json','download_manifest.json'):
         add(f'models/{model}/{name}')
-for name in ('audit_submission.py','audit_original.py','publication_figures.py','finish_cv_audit.py','audit_strengthening.py','controlled_figure.py','audit_robustness.py','audit_robustness_v2.py','audit_extensions.py','render_supplement.py'):
+for name in ('audit_submission.py','audit_original.py','publication_figures.py','finish_cv_audit.py','audit_strengthening.py','controlled_figure.py','audit_robustness.py','audit_robustness_v2.py','audit_extensions.py','run_audits.py','render_supplement.py'):
     add(P/'tools'/name)
 for p in (P/'evidence').iterdir():
     if p.suffix in ('.json','.csv') and '_interim' not in p.name and p.name not in ('package_validation.json','manual_audit_selection_key.json'):add(p)
@@ -234,20 +243,19 @@ training/inference source are supplied for researchers with the required models.
 
 REPLAY (run from the extracted archive root; Python 3.13 was used)
   python -m pip install -r requirements-cpu.txt
-  python -X utf8 paper/applied_intelligence/tools/audit_submission.py
-  python -X utf8 paper/applied_intelligence/tools/audit_original.py
-  python -X utf8 paper/applied_intelligence/tools/audit_strengthening.py --existing
-  python -X utf8 paper/applied_intelligence/tools/audit_strengthening.py --controlled
-  python -X utf8 paper/applied_intelligence/tools/audit_strengthening.py --controller-replay
-  python -X utf8 paper/applied_intelligence/tools/audit_robustness_v2.py --omission
-  python -X utf8 paper/applied_intelligence/tools/audit_robustness_v2.py --analyze
-  python -X utf8 paper/applied_intelligence/tools/audit_extensions.py
+  python -X utf8 paper/applied_intelligence/tools/run_audits.py
+run_audits.py sets PYTHONHASHSEED=1 and runs, in order:
+  audit_submission.py; audit_original.py;
+  audit_strengthening.py --existing / --controlled / --controller-replay;
+  audit_robustness_v2.py --omission / --analyze; audit_extensions.py.
 These regenerate evidence/audit.json, replayed_details.json, CSV tables,
 original_replayed.json, original_first_metrics.json and extensions_audit.json.
-No model is loaded. Set PYTHONHASHSEED=1 to reproduce replayed_details.json
-byte for byte: one descriptive field that is not reported in the article or
+No model is loaded. The fixed hash seed reproduces replayed_details.json byte
+for byte: one descriptive field that is not reported in the article or
 supplement (record 5, fidelity_on_accepted.precondition_exact_chain) depends on
-string-hash ordering by 0.3-0.5 percentage points. In the extracted archive
+string-hash ordering by 0.3-0.5 percentage points. Run individual audits with
+PYTHONHASHSEED=1 set in the environment for the same result.
+The code is also available at https://github.com/XujianZeng/sop2program. In the extracted archive
 extensions_audit.json marks the ChEMU API generation check as not distributed,
 because those raw outputs contain licensed text; every other field matches.
 The checks verify full final acceptance, source/inventory preservation,

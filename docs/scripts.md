@@ -75,6 +75,7 @@
 
 | 脚本 | 用途 |
 |---|---|
+| `run_audits.py` | 统一入口：固定 `PYTHONHASHSEED=1`，依次运行下列全部 CPU 复核 |
 | `audit_submission.py` | 五折主结果 CPU 重放 |
 | `audit_original.py` | 原始划分结果 CPU 重放 |
 | `audit_strengthening.py` | `--existing` 首选/级联分解；`--controlled` 受控实验；`--controller-replay` 控制器重放 |

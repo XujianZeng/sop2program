@@ -102,21 +102,23 @@ Copy-Item .env.example .env   # 填入 DEEPSEEK_API_KEY
 ## 7. CPU 复核（不加载模型）
 
 ```powershell
-$env:PYTHONHASHSEED = '1'
 $t = 'paper/applied_intelligence/tools'
-& $py -X utf8 "$t/audit_submission.py"                 # 五折主结果（表 1）
-& $py -X utf8 "$t/audit_original.py"                   # 原始划分结果（补充材料 S2）
-& $py -X utf8 "$t/audit_strengthening.py" --existing
-& $py -X utf8 "$t/audit_strengthening.py" --controlled
-& $py -X utf8 "$t/audit_strengthening.py" --controller-replay
-& $py -X utf8 "$t/audit_robustness_v2.py" --omission
-& $py -X utf8 "$t/audit_robustness_v2.py" --analyze
-& $py -X utf8 "$t/audit_extensions.py"                 # 外部基线、种子、ChEMU
+& $py -X utf8 "$t/run_audits.py"        # 固定 PYTHONHASHSEED=1，依次运行下列全部复核
 & $py -X utf8 "$t/publication_figures.py"; & $py -X utf8 "$t/controlled_figure.py"
 & $py -X utf8 "$t/render_supplement.py"
 ```
 
-审计结果写入 `paper/applied_intelligence/evidence/`。`PYTHONHASHSEED=1` 只影响 `replayed_details.json` 中一个未在论文报告的描述性字段（第 5 条记录的 `fidelity_on_accepted.precondition_exact_chain`，随字符串哈希顺序变化 0.3–0.5 个百分点）；设为 1 时与归档值逐字节一致。
+`run_audits.py` 的运行顺序：
+
+| 脚本 | 复核内容 |
+|---|---|
+| `audit_submission.py` | 五折主结果（表 1） |
+| `audit_original.py` | 原始划分结果（补充材料 S2） |
+| `audit_strengthening.py --existing / --controlled / --controller-replay` | 首选/级联分解、受控实验、控制器重放 |
+| `audit_robustness_v2.py --omission / --analyze` | C 臂、评分敏感性与分层 |
+| `audit_extensions.py` | 外部基线、种子、ChEMU |
+
+审计结果写入 `paper/applied_intelligence/evidence/`。Python 字符串哈希顺序只影响 `replayed_details.json` 中一个未在论文报告的描述性字段（第 5 条记录的 `fidelity_on_accepted.precondition_exact_chain`，变化 0.3–0.5 个百分点）；`run_audits.py` 固定 `PYTHONHASHSEED=1`，结果与归档值逐字节一致。单独运行某个复核脚本时，请先设置 `$env:PYTHONHASHSEED='1'`。这些复核脚本的哈希已被冻结协议记录，所以种子在入口脚本里固定，而不是写进脚本本身。
 
 ## 运行注意事项（Windows + 24 GB 显卡）
 

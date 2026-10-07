@@ -54,6 +54,8 @@ results/              全部实验输出
 # CPU：单元测试与复核（先安装 CPU 版 torch==2.8.0）
 python -m pip install -r requirements-cpu.txt
 python -X utf8 -m pytest tests -q        # 无数据、无模型时：92 通过，9 跳过
+# 有论文归档的数据与结果时（Online Resource 1 解压后），一条命令重算全部报告数字
+python -X utf8 paper/applied_intelligence/tools/run_audits.py
 
 # GPU：先按 CUDA 版本安装 torch==2.8.0，再安装其余依赖
 python -m pip install -r requirements-gpu.txt
