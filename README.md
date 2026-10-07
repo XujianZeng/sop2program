@@ -47,13 +47,13 @@ results/              全部实验输出
 ## 环境
 
 - Python 3.13；论文实验使用 Windows 原生 CUDA 12.8 环境，PyTorch 2.8.0、Transformers 4.57.6、PEFT 0.18.1。
-- GPU：一张约 24 GB 显存的卡（论文使用 RTX 5090 D v2）。14B 编译评测在批大小 32 时需要约 23 GB；Windows 上显存不足会回退到系统内存，速度下降一个数量级（见 `docs/reproduce.md` 的"运行注意事项"）。
+- GPU：一张约 24 GB 显存的卡（论文使用 RTX 5090 D v2）。14B 编译评测在批大小 32 时需要约 23 GB；Windows 上显存不足会回退到系统内存，速度下降数倍乃至一个数量级以上（见 `docs/reproduce.md` 的"运行注意事项"）。
 - 只做 CPU 复核和单元测试时，只需 `requirements-cpu.txt`。
 
 ```powershell
 # CPU：单元测试与复核（先安装 CPU 版 torch==2.8.0）
 python -m pip install -r requirements-cpu.txt
-python -X utf8 -m pytest tests -q        # 无数据、无模型时：93 通过，8 跳过
+python -X utf8 -m pytest tests -q        # 无数据、无模型时：92 通过，9 跳过
 
 # GPU：先按 CUDA 版本安装 torch==2.8.0，再安装其余依赖
 python -m pip install -r requirements-gpu.txt
@@ -78,7 +78,7 @@ python -X utf8 scripts/compile_sop.py --input examples/lifecycle.txt `
 |---|---|
 | `docs/architecture.md` | 方法与代码模块的对应关系、程序表示、验证、修复、身份重放 |
 | `docs/data_and_models.md` | X-WLP、ChEMU、模型的获取方式、许可与目录约定 |
-| `docs/reproduce.md` | 论文每组实验的完整复现命令、耗时与运行注意事项 |
+| `docs/reproduce.md` | 论文每组实验的完整复现命令与运行注意事项 |
 | `docs/results_map.md` | 论文每张表/图 → 产生脚本 → 结果文件 → 复核脚本 |
 | `docs/scripts.md` | 每个脚本的用途 |
 

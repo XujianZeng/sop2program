@@ -133,7 +133,7 @@ for block in pattern.split(source):
             if para.strip():
                 chunks.append('<p>'+inline(para)+'</p>')
 
-assert table_index == 18
+assert table_index == 21
 assert all('\\' not in cell for t in stats for row in t['rows'] for cell in row), 'Unrendered table markup'
 title='Identity-sensitive verification and learned repair for language-model compilation of laboratory protocols'
 page='''<!doctype html>
@@ -149,12 +149,12 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f6f7;padding:16px;
 img{max-width:850px;width:100%}.equation{text-align:center;padding:12px}sup,sub{line-height:0}
 </style></head><body><h1>Supplementary methods and results</h1>'''
 page+='<p>'+html.escape(title)+'</p><p>Applied Intelligence<br>Xujian Zeng; Xin Lu; Shuaikang Wu<br>Correspondence: zengxujian5@gmail.com<br>Changsha IMADEK Intelligent Technology Co., Ltd., China</p>'
-page+='<nav>'+''.join(f'<a href="#s{i}">Section S{i}</a>' for i in range(1,7))+'</nav>'
-page+='<p>Online Resource 1. Extended methods and all 18 numerical tables are retained here after manuscript shortening. No experiments were rerun or selected by significance. S1: extended methods; S2: original-split and auxiliary evidence; S3: automatic diagnostics; S4: full statistical and fold details; S5: complete tables; S6: additional plots. Citation keys match the bibliographic records below. The adjacent LaTeX source fragment preserves the original mathematical and table notation.</p>'
+page+='<nav>'+''.join(f'<a href="#s{i}">Section S{i}</a>' for i in range(1,8))+'</nav>'
+page+='<p>Online Resource 1. Extended methods and all 21 numerical tables are retained here after manuscript shortening. No experiments were selected by significance. S1: extended methods; S2: original-split and auxiliary evidence; S3: automatic diagnostics; S4: full statistical and fold details; S5: complete tables; S6: additional plots; S7: external refinement baselines, training-seed replication and the ChEMU second corpus (Tables S19-S21). Citation keys match the bibliographic records below. The adjacent LaTeX source fragment preserves the original mathematical and table notation.</p>'
 page+='\n'.join(chunks)
 page+='<h2>Bibliographic records</h2><pre>'+html.escape((P/'refs.bib').read_text(encoding='utf-8'))+'</pre></body></html>'
 assert '@@TABLE' not in page and 'see main article or source archive' not in page
-assert page.count('<table>')==18 and page.count('<img ')==2
+assert page.count('<table>')==21 and page.count('<img ')==2
 (S/'supplementary_details.html').write_text(page,encoding='utf-8')
 (S/'rendered_tables.json').write_text(json.dumps(stats,indent=2)+'\n',encoding='utf-8')
-print(f'Rendered {table_index} complete tables, 6 sections, 2 figures and Algorithm S1.')
+print(f'Rendered {table_index} complete tables, 7 sections, 2 figures and Algorithm S1.')

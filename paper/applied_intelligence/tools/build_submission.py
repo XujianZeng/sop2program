@@ -19,6 +19,9 @@ assert V['endpoints']==1104 and V['controller_replay_all_fields_equal']
 assert R['includes_candidate_only'] and R['documents']==276
 V8=next(r for r in V['pooled'] if r['budget']==8)
 COMMON=next(r for r in R['common_subsets'] if r['family']=='controlled')
+X=read(P/'evidence/extensions_audit.json')
+assert not X['problems'] and X['chemu']['arms_at_cap8']['D_deterministic']['confirmed']==150
+assert X['seeds']['across_seeds']['producer_feedback']['values']==[180,185,170]
 TITLE='Identity-sensitive verification and learned repair for language-model compilation of laboratory protocols'
 
 write('cover_letter.txt',f'''Dear Editor,
@@ -27,9 +30,9 @@ Please consider our manuscript, "{TITLE}", for publication as a research article
 
 The study examines a limitation of language-model compilation of laboratory protocols: symbolic verification can accept a program whose object mentions denote unintended entities. We combine induced constraints, bounded source-constrained repair and trained proposals, and evaluate accepted programs using existing X-WLP entity annotations.
 
-In retrospective five-fold evaluation of 276 protocols, 15.5-22.2% of repaired programs accepted by the string verifier fail annotation-derived replay. For the fine-tuned 14B compiler, deterministic repair increases jointly confirmed programs from 97 to 142; a trained cascade reaches 188. A controlled study fixes the architecture, compiled inputs and generation ceilings without fallback. At the eight-sequence ceiling, producer feedback confirms 180 programs, versus 149, 146 and 144 for the original controls. A later candidate-preserving control omitting only explicit violations confirms {V8['confirmed']}, with 38:0 paired gains:losses. Scoring sensitivity preserves the aggregate contrasts while exposing incomplete strict-resolution coverage. Actual inference use differs, and individual regressions are reported.
+In retrospective five-fold evaluation of 276 protocols, 15.5-22.2% of repaired programs accepted by the string verifier fail annotation-derived replay. For the fine-tuned 14B compiler, deterministic repair increases jointly confirmed programs from 97 to 142; a trained cascade reaches 188. A controlled study fixes the architecture, compiled inputs and generation ceilings without fallback: at the eight-sequence ceiling, producer feedback confirms 180 programs (mean 178.3 over three training seeds, with no losses against deterministic repair in any seed), versus 142-149 for four feedback controls. Reimplemented CRITIC- and CLAIRify-style refinement on the same 14B backbone confirms 158 and 160 (Holm-adjusted p=0.0025); driven by a commercial API model, these strategies confirm 186-189, not significantly different from the fitted proposer, at up to 11 times its output tokens. On a second corpus derived from ChEMU and ChEMU-Ref, evaluated with the design frozen, deterministic repair raises confirmations from {X['chemu']['arms_at_cap8']['F_first_pass']['confirmed']} to {X['chemu']['arms_at_cap8']['D_deterministic']['confirmed']}, 28-29% of acceptances fail replay under every repair method, and refinement adds at most eight confirmations because few verifier-detectable errors remain.
 
-The paper connects neuro-symbolic procedural reasoning to the validity of its evaluation oracle. The concise main article presents the central methods and comparisons; Online Resource 1 retains complete fold-level and statistical tables, resource accounting, automatic diagnostics and saved-output CPU replay. Limitations include retrospective development choices, one seed, supplied anchors and inventories, heuristic entity resolution and projected state semantics. We claim neither physical laboratory execution nor independent human validation. Generative-AI assistance in manuscript preparation is disclosed.
+The paper connects neuro-symbolic procedural reasoning to the validity of its evaluation oracle and shows that verifier-guided refinement, learned or prompted, is bounded by what the verifier can see. The main article presents the central methods and comparisons; Online Resource 1 retains complete fold-level, seed, external-baseline and statistical tables, resource accounting, automatic diagnostics and saved-output CPU replay. Limitations include retrospective development choices, supplied anchors and inventories, rule-derived ChEMU chains, heuristic entity resolution and projected state semantics. We claim neither physical laboratory execution nor independent human validation. Generative-AI assistance in manuscript preparation is disclosed.
 
 Thank you for considering this work.
 
@@ -63,61 +66,45 @@ Full address: 16th Floor, Investment and Development Building, No. 44 Renmin Roa
 The manuscript uses concise institutional addresses. These full addresses may be used in the submission system after author verification.
 ''')
 
-write('submission_notes_zh.txt',f'''Applied Intelligence 投稿说明（2026-10-05）
+write('submission_notes_zh.txt',f'''Applied Intelligence 投稿说明（2026-10-07）
 
 稿件：{TITLE}
-目前为已完成五折主实验、补充对照及技术复核的本地投稿稿，尚未向期刊提交，也不能保证录用。投稿前仍需作者确认声明和最终稿。
+本地投稿稿，尚未向期刊提交，不能保证录用。投稿前须由全体作者确认声明和最终稿。
 
-一、文件
-本轮按用户要求压缩至14页（包含参考文献），保留3张核心表、2幅图；字体、字号、页边距和模板不变。原完整18张表、扩展方法及2幅补充图移入ESM中的supplementary_details.html及可编辑.tex片段；实验结果不变。
-manuscript.tex / manuscript.pdf：当前编辑器中的同一篇论文源文件及PDF。
-refs.bib、sn-jnl.cls、sn-basic.bst、Fig1.pdf、Fig2.pdf（本地位于figures/，源文件投稿包中置于根目录）：编译所需文件。
-figures/Fig1-2.eps：期刊可用的矢量图。
-ESM_1.zip：Online Resource 1，包含实验数据划分、保存的预测/修复、规则、配置、复核代码、逐文档结果和原始语料许可证。
-source_files.zip：可编辑LaTeX源文件及图。
-cover_letter.txt：英文投稿附信。
-author_information.txt：作者顺序、完整地址和联系方式。
-Applied_Intelligence_submission_package.zip：以上投稿文件的本地汇总包。
+一、上传文件（见同目录“上传清单.txt”）
+manuscript.pdf：正文PDF，18页（含参考文献），5张表、2幅图；Springer sn-jnl模板，字体、字号、页边距未改。
+manuscript.tex、manuscript.bbl、refs.bib、sn-jnl.cls、sn-basic.bst、Fig1.pdf、Fig2.pdf：LaTeX源文件（source_files.zip为同一组文件的压缩包）。
+Fig1.eps、Fig2.eps：矢量图。
+ESM_1.zip：Online Resource 1（补充材料S1–S7、21张补充表、全部代码、保存的预测与修复、外部基线与种子复现的原始输出、逐文档结果、CPU复核脚本）。
+cover_letter.txt：英文附信。author_information.txt：作者信息（填系统用，不上传）。
 
-二、五折结果
-测试协议总数276，操作总数3869；固定的3个few-shot示例始终留在训练集。
-Few-shot 14B：首遍4；确定性修复45；未训练提议器49；训练式级联77。
-Fine-tuned 3B：首遍71；确定性修复134；训练式级联167。
-Fine-tuned 14B：首遍97；确定性修复142；训练式级联188。
-以上都使用“完整字符串验证器通过 + 注释实体身份状态回放通过”的统一条件。
-六项确定性/训练式改进的Holm校正p值均不超过9.32e-10；未训练提议器的比较p=0.125。
-统计检验条件于已保存的模型，不代表多训练种子独立复现。
-原开发集42篇全部进入五折测试，稿件已明确说明这是设计后进行的回顾性重采样，不是嵌套交叉验证或外部独立测试。
+二、主要结果（全部为“完整字符串验证器通过 + 注释实体链状态回放通过”）
+五折276篇：fine-tuned 14B首遍97、确定性修复142、训练式级联188；3B为71/134/167；few-shot为4/45/77。修复后被字符串验证器接受的程序中15.5–22.2%未通过实体链回放。
+受控对比（同一批编译输出、单14B提议器、无备用模型、每篇最多8次生成）：生产步骤反馈P 180篇；N/O/U/C对照149/146/144/142篇。
+三个训练种子（42/43/44）：P为180/185/170（均值178.3，SD 7.6），确定性修复均值147.3，未微调提议器均值148.7；每个种子中P相对确定性修复都没有损失。
+同基座外部基线（base Qwen3-14B，与P同一底座）：CRITIC式158、CLAIRify式160；P的配对增益/损失33:11、30:10，Holm校正p均为0.0025。
+商用API模型（deepseek-flash）外部基线：CLAIRify式189、CRITIC式186、Self-Refine式167；与P差异不显著（Holm p=0.30/0.43/0.16），CLAIRify式输出token为P的11.4倍；用API模型替换P的提议器降至163（Holm p=8.9e-4）。
+第二语料ChEMU（225篇测试片段，设计冻结）：确定性修复由71升至150（79:0）；所有修复方法的接受中28–29%未通过回放；学习型与API修复最多再增加8篇，均不显著。
+复核：evidence/extensions_audit.json由逐文档结果独立重算上述外部基线、种子和ChEMU数字，与各自summary完全一致；原有主实验、受控对比、稳健性审计均已重跑通过。
 
-新增固定架构与生成上限的对照：同一批276篇fine-tuned14B编译输出，无备用模型和示例，比较四组单14B提议器。在每篇最多8次生成的上限下，生产步骤反馈180篇、失败节点反馈149篇、删去反馈输入块146篇、关闭微调adapter144篇；P相对三对照的增益/损失分别31/0、37/3、37/1，三项独立成组的Holm校正p分别1.86e-9、1.95e-8、8.51e-10。
-实际生成序列数270/166/192/201并不相同，不能称为计算量完全相等。删去的反馈块同时包含当前候选算子和违规信息，不能解释为只去掉违规文字。微调训练目标仍未分别消融。
-四组在1/2/4/8次上限的所有结果、推理token/时间、逐折结果、Wilson区间及反例均完整报告。20组新运行产生829条序列，复核了4416个预算终点，并用保存的模型输出重放控制流程；所有保存字段一致。原主实验和原42篇测试结果未更改。
-去掉原开发集42篇后，剩余234篇仍保留改进方向；这是事后敏感性分析，不能把它称为独立验证。原14B级联的46篇净改进中，39篇已由主模型完成，备用模型再增加7篇。
+三、数据许可
+X-WLP为MIT许可，原许可证和README随ESM提供。
+ChEMU 2020与ChEMU-Ref受Elsevier有限数据许可约束，仅限研究使用。ESM只包含推导与评测代码、片段ID和汇总结果（results/chemu/summary.json、document_outcomes.csv），不含任何原始或派生的ChEMU文本、标注、程序、规则或含提示词的输出。
 
-本次进一步补强：新增C组只删除违规字段，保留候选算子和原有提示指令、生产步骤选择及提议筛选，不能称为完全没有验证器信息。五折全部完成；8次生成上限下确认{V8['confirmed']}/276篇、字符串验证接受{V8['accepted']}篇、实际生成{V8['calls']}条序列。P相对C的配对增益/损失为{V['comparison']['gain']}/{V['comparison']['loss']}，双侧精确p={V['comparison']['p']:.6g}；这是独立的一项事后补充比较，不是原三项预定检验之一，也不声称预注册。
-新增5组运行的1104个预算终点、原始生成输出及全部控制器字段已用CPU复核。旧主实验和旧四组对照均未改动或重新生成。
-评分敏感性保持参考实体库存固定。去掉存活实体偏好后，原P/N/O/U四组分别为178/147/144/142篇。严格唯一精确匹配将无法解析的输出记为不可判定，同时报告覆盖率；五个对照组共同可解析子集为{COMMON['documents']}篇，属于输出相关的选择子集，不能外推为总体准确率或人工验证。全部五折的流程长度、实体数、依赖距离和同名异物分层，以及自动首个失败原因均已归档，不用分层结果挑选有利实验。
-证据：evidence/violation_omission_audit.json、robustness_audit.json、robustness_details.json及相应CSV。实验方案在生成新结果前写入results/robustness_extension/protocol.json；CPU读取旧档案时处理缺失的不完整REVIEW输出的修正记录于analysis_implementation_amendment.json，原代码和协议保留。
+四、投稿前必须由作者确认的事项
+1. 利益冲突与CRediT贡献：仍为根据参考PDF暂拟的文字，须作者确认后据实修改。经费已于2026-10-05确认为“无经费”。
+2. 生成式AI声明：现写为“ChatGPT Codex and the Cursor coding agent (Claude models)”用于写作、实验与复核脚本和作图辅助。请按实际使用的工具确认或修改（正文5.5节和声明部分两处）。
+3. 全体作者通读并同意最终稿；在投稿系统中如实确认原创性和未一稿多投。
+4. 作者表示无法开展人工盲审；稿件未声称任何人工评分、专家一致性或物理实验执行。
 
-三、投稿前必须由作者核实的事实
-作者姓名、顺序和单位已按指定参考PDF填写。
-经费已于2026-10-05由作者明确确认：本研究没有经费来源。论文Funding声明为“No funding was received for conducting this study.”，此项已完成确认。
-利益冲突和CRediT贡献仍是从参考PDF暂拟移入，尚待作者确认适用于本研究；经费确认不代表利益冲突、贡献分配或全体作者批准也已确认。当前利益冲突文字为“无相关利益冲突”，贡献分配见稿件；若实际情况不同，须据实修改。
-请所有署名作者通读、核实并同意最终稿；在投稿系统中如实确认原创性、是否同时投往其他期刊和作者同意情况。附信没有替作者预先作出这些未经确认的声明。
-方法与声明部分已披露ChatGPT Codex用于写作、复核脚本和作图辅助；AI没有被列为作者，也没有生成实验观测值。
+五、解释范围
+亮点是验证/修复系统的实体身份敏感性及其评估方法，而不是端到端实验室执行。保留的限制：金标动作锚点和初始库存、模板投影状态、启发式共指解析、ChEMU实体链由规则推导、回顾性折划分与开发集选择、主级联和外部基线只有一次训练。
+补充审计中一项仅在补充数据文件出现的描述性指标（replayed_details.json第5条记录的precondition_exact_chain）随Python字符串哈希顺序变化约0.3–0.5个百分点；该指标未在正文或补充表中报告。复核时设置PYTHONHASHSEED=1可逐字节复现归档值。
 
-四、投稿定位和解释范围
-亮点是验证/修复系统的实体身份敏感性及其评估方法，而不是端到端自动实验室执行。
-论文保留金标动作锚点和初始库存、模板投影状态、启发式共指解析、单语料单种子等限制。新增对照固定架构、输入和最大生成上限，原级联仍属于完整系统比较；并未证明通用效率最优或解决全部混杂因素。
-本地代码与保存输出支持CPU重新计分；归档不含预训练模型和adapter权重，不把该归档称为无需模型下载即可重训。
-作者表示目前无法开展人工盲审，因此不列为本轮待完成任务。已有manual_audit/reviewer_packet.zip只是40个匿名案例、说明和空白表单，没有人工评分，不能声称人工核验、专家一致性或Kappa已完成。选择键不随审阅包或ESM分发。新增自动稳健性检查也不能代替人工语义评估。
-
-五、格式与技术检查
-篇幅参考：抽样Applied Intelligence 54(24)、Neural Computing and Applications 37(1)、Soft Computing 29(1)，排除勘误、撤稿说明和综述后共74篇研究文章，出版页数中位数18.5；45篇为12–20页。这不是全部SCI的统计，也不将出版页数等同于投稿页数。来源和逐篇页码保存在evidence/length_benchmark.json。
-采用Springer sn-jnl及数字编号文献，摘要在150-250词范围，6个关键词，含作者声明、数据与代码可得性和补充材料说明。
+六、格式与入口
+摘要210词（要求150–250），6个关键词，含作者声明、数据与代码可得性及补充材料说明。
 官方指南：https://link.springer.com/journal/10489/submission-guidelines
 投稿入口：https://www.editorialmanager.com/apin/
-内置编辑器编译器曾报告平台标准目录错误；项目已有Tectonic可编译同一源文件为同名PDF，不需要安装TeX。最终技术检查见evidence/quality_check.json（若已生成）。
 ''')
 
 files=set()
@@ -170,12 +157,27 @@ for r in read(P/'evidence/original_replayed.json'):
             parent=(ROOT/adapter).parent
             for name in ('config.json','training.jsonl'):
                 if (parent/name).exists():add(parent/name)
+for backend in ('deepseek-flash','qwen14-base'):
+    tree(f'results/external_baselines/{backend}',('.json','.csv'))
+add('results/seeds/summary.json')
+add('results/seeds/document_outcomes.csv')
+for seed in (43,44):
+    for k in range(5):
+        base=f'results/seeds/seed{seed}/fold{k}'
+        for name in ('producer_feedback.json','untuned_producer.json','recheck_deterministic_qwen14.json',
+                     'qwen14/config.json','qwen14/training.jsonl'):
+            add(f'{base}/{name}')
+        tree(base+'/eval_qwen14')
+        tree(base+'/repair_deterministic_qwen14')
+# ChEMU: summary outcomes by snippet id only; raw and derived data are under an Elsevier licence.
+add('results/chemu/summary.json')
+add('results/chemu/document_outcomes.csv')
 for name in ('results/hypothesis_opt/summary.json','results/hypotheses_v4.json','results/h5_qwen3_14b_judge.json'):
     if (ROOT/name).exists():add(name)
 for model in ('Qwen3-14B-FP8','Qwen2.5-3B-Instruct'):
     for name in ('config.json','download_manifest.json'):
         add(f'models/{model}/{name}')
-for name in ('audit_submission.py','audit_original.py','publication_figures.py','finish_cv_audit.py','audit_strengthening.py','controlled_figure.py','audit_robustness.py','audit_robustness_v2.py','render_supplement.py'):
+for name in ('audit_submission.py','audit_original.py','publication_figures.py','finish_cv_audit.py','audit_strengthening.py','controlled_figure.py','audit_robustness.py','audit_robustness_v2.py','audit_extensions.py','render_supplement.py'):
     add(P/'tools'/name)
 for p in (P/'evidence').iterdir():
     if p.suffix in ('.json','.csv') and '_interim' not in p.name and p.name not in ('package_validation.json','manual_audit_selection_key.json'):add(p)
@@ -192,14 +194,14 @@ School of Information Engineering, Guilin Institute of Information Technology, C
 Laibin Survey Team, National Bureau of Statistics of China, China.
 
 READING GUIDE
-The main article is shortened to 14 pages, including references, with 3 tables
-and 2 figures. Full numerical detail is retained in
+The main article has 18 pages, including references, with 5 tables and
+2 figures. Full numerical detail is retained in
 paper/applied_intelligence/supplement/supplementary_details.html (open locally
-in a browser; retain its adjacent PNG files). Sections S1-S6 contain extended
-methods, original-split evidence, diagnostics, all 18 tables and 2 extra plots.
+in a browser; retain its adjacent PNG files). Sections S1-S7 contain extended
+methods, original-split evidence, diagnostics, external refinement baselines,
+training-seed replication, the ChEMU second corpus, 21 tables and 2 plots.
 The adjacent .tex file is an editable source fragment, not a second manuscript.
-Table labels in table_mapping.json map the previous full version to S1-S18.
-No experiment was changed or rerun during this editorial shortening.
+table_mapping.json maps the earlier full-version table labels to S1-S21.
 
 SCOPE
 Five completed folds: 276 distinct protocols and 3869 operators. Three fixed
@@ -213,6 +215,19 @@ The later candidate-only control adds 5 fold runs and 1104 budget endpoints;
 all 5 controlled arms are scored under three pre-specified resolution policies.
 Strict coverage and common-subset outcomes, complete complexity strata and
 automatic first-failure diagnostics are supplied without human-label claims.
+External refinement baselines (results/external_baselines): Self-Refine-,
+CRITIC- and CLAIRify-style refinement and producer routing driven by the
+deepseek-flash API, and CRITIC/CLAIRify on the base Qwen3-14B backbone; every
+raw prompt, reply, token count and document outcome is retained.
+Training-seed replication (results/seeds): seeds 43 and 44 retrain the 14B
+adapter in every fold; compiled outputs, repairs and outcomes are retained
+(adapter weights and checkpoints are excluded). Seed 42 is the saved CV run.
+ChEMU second corpus (results/chemu): only summary.json and
+document_outcomes.csv (snippet ids and binary outcomes). ChEMU 2020 and
+ChEMU-Ref are licensed by Elsevier for research use only; raw text,
+annotations, derived programs, rules and prompt-bearing outputs are NOT
+distributed. scripts/prepare_chemu.py and scripts/chemu_pipeline.py rebuild
+them from the providers' releases.
 This archive supports CPU replay of saved outputs, not physical lab execution.
 Pretrained model and adapter weights are excluded. Configuration records and
 training/inference source are supplied for researchers with the required models.
@@ -226,8 +241,15 @@ REPLAY (run from the extracted archive root; Python 3.13 was used)
   python -X utf8 paper/applied_intelligence/tools/audit_strengthening.py --controller-replay
   python -X utf8 paper/applied_intelligence/tools/audit_robustness_v2.py --omission
   python -X utf8 paper/applied_intelligence/tools/audit_robustness_v2.py --analyze
+  python -X utf8 paper/applied_intelligence/tools/audit_extensions.py
 These regenerate evidence/audit.json, replayed_details.json, CSV tables,
-original_replayed.json and original_first_metrics.json. No model is loaded.
+original_replayed.json, original_first_metrics.json and extensions_audit.json.
+No model is loaded. Set PYTHONHASHSEED=1 to reproduce replayed_details.json
+byte for byte: one descriptive field that is not reported in the article or
+supplement (record 5, fidelity_on_accepted.precondition_exact_chain) depends on
+string-hash ordering by 0.3-0.5 percentage points. In the extracted archive
+extensions_audit.json marks the ChEMU API generation check as not distributed,
+because those raw outputs contain licensed text; every other field matches.
 The checks verify full final acceptance, source/inventory preservation,
 entity-chain replay, cached outcomes, consistent first-pass scoring and splits.
 The supplementary audit recomputes all endpoints, the three paired tests and
@@ -278,16 +300,19 @@ Derived artifacts and project code are supplied for review and reproducibility;
 no new blanket license is asserted for author-owned files. Third-party model
 weights are not redistributed. Model manifests record their upstream IDs.
 '''
+CHEMU_OK={'results/chemu/summary.json','results/chemu/document_outcomes.csv'}
+assert all(p.suffix=='.py' or p.relative_to(ROOT).as_posix() in CHEMU_OK for p in files
+           if 'chemu' in p.relative_to(ROOT).as_posix().lower()), 'ChEMU-derived data must not be archived'
 hashes={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(files)}
 esm=P/'ESM_1.zip'
 with zipfile.ZipFile(esm,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=6) as z:
     for p in sorted(files):z.write(p,p.relative_to(ROOT).as_posix())
     z.writestr('README.txt',readme)
-    z.writestr('requirements-cpu.txt','pydantic==2.13.4\nscipy==1.18.1\n')
+    z.writestr('requirements-cpu.txt','pydantic==2.13.4\nscipy==1.18.1\nmatplotlib==3.11.2\n')
     z.writestr('SHA256SUMS.json',json.dumps(hashes,indent=2))
 with zipfile.ZipFile(esm) as z:assert z.testzip() is None
 
-source=[P/name for name in ('manuscript.tex','refs.bib','sn-jnl.cls','sn-basic.bst')]
+source=[P/name for name in ('manuscript.tex','manuscript.bbl','refs.bib','sn-jnl.cls','sn-basic.bst')]
 source+=list((P/'figures').glob('Fig[12].pdf'))
 with zipfile.ZipFile(P/'source_files.zip','w',compression=zipfile.ZIP_DEFLATED) as z:
     for p in source:z.write(p,p.name)
